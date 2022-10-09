@@ -1,13 +1,16 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: 'Get Minecraft Forge Version'
+description: 'Finds the latest Minecraft Forge version for a Minecraft version'
 inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
+  minecraftVersion:
+    description: 'The Minecraft version you want to get the latest Forge version for'
     required: true
-    default: '1000'
+  channel:
+    description: "The release channel, either 'latest' or 'recommended'"
+    required: false
+    default: latest
 outputs:
-  time: # output will be available to future steps
-    description: 'The current time after waiting'
+  version:
+    description: 'The latest Forge version for the given Minecraft version and release channel'
 runs:
   using: 'node16'
   main: 'dist/index.js'

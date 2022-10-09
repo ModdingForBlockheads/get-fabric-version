@@ -1,18 +1,15 @@
 const core = require('@actions/core');
-const wait = require('./wait');
+const findFabricVersion = require("./version");
 
-
-// most @actions toolkit packages have async methods
 async function run() {
   try {
-    const ms = core.getInput('milliseconds');
-    core.info(`Waiting ${ms} milliseconds ...`);
+    const minecraftVersion = core.getInput('minecraftVersion');
+    core.info(`Finding Fabric version for ${minecraftVersion} ...`);
 
-    core.debug((new Date()).toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
-    await wait(parseInt(ms));
-    core.info((new Date()).toTimeString());
+    const {apiVersion, loaderVersion} = await findFabricVersion(minecraftVersion);
 
-    core.setOutput('time', new Date().toTimeString());
+    core.setOutput('apiVersion', apiVersion);
+    core.setOutput('loaderVersion', loaderVersion);
   } catch (error) {
     core.setFailed(error.message);
   }
