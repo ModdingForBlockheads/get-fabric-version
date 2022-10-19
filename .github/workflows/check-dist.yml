@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Set Node.js 16.x
-        uses: actions/setup-node@v2.5.1
+        uses: actions/setup-node@v3.5.1
         with:
           node-version: 16.x
 
@@ -44,8 +44,27 @@ jobs:
         id: diff
 
       # If index.js was different than expected, upload the expected version as an artifact
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: ${{ failure() && steps.diff.conclusion == 'failure' }}
         with:
           name: dist
           path: dist/
+
+      - name: Create a pull request to fix the dist/ directory
+        if: ${{ failure() && steps.diff.conclusion == 'failure' && github.event_name == 'push' }}
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "<>"
+          git switch -c $PR_BRANCH
+          git commit -am "Rebuild dist from sources"
+          git push --force origin $PR_BRANCH
+          gh pr create \
+          --head "${PR_BRANCH}" \
+          --base "${TARGET_BRANCH}" \
+          --title "Rebuild dist for ${TARGET_BRANCH}" \
+          --body "Rebuilt dist for ${TARGET_BRANCH} from sources."
+        shell: bash
+        env:
+          PR_BRANCH: actions/rebuild-dist
+          TARGET_BRANCH: ${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
