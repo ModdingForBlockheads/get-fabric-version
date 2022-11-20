@@ -12,13 +12,13 @@ test('throws missing version', async () => {
 });
 
 test('get exact api version', async () => {
-    const {apiVersion} = await findFabricVersion('1.18.2');
-    expect(apiVersion).toBe('0.59.0+1.18.2');
+    const {apiVersion} = await findFabricVersion('1.17');
+    expect(apiVersion).toBe('0.46.1+1.17');
 });
 
 test('get previous minor api version', async () => {
-    const {apiVersion} = await findFabricVersion('1.18.3');
-    expect(apiVersion).toBe('0.59.0+1.18.2');
+    const {apiVersion} = await findFabricVersion('1.17.1');
+    expect(apiVersion).toBe('0.46.1+1.17');
 });
 
 test('get base api version', async () => {
